@@ -31,11 +31,9 @@ jobs:
         run: |
           $SPARK_HOME/bin/spark-submit --master local data_processing.py
 
-      - name: Move processed data to output directory
-        run: |
-          mkdir -p output
-          mv results/* output/
-
-      - name: Verify processed data
-        run: |
-          ls -l output/
+    
+      - name: Upload processed data
+        uses: actions/upload-artifact@v2
+        with:
+          name: processed-data
+          path: results/data.json
