@@ -1,39 +1,74 @@
-name: Spark Data Processing
+# This is a basic workflow to help you get started with Actions
 
+name: spark
+
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
+  # Allows you to run this workflow manually from the Actions tab
+  repository_dispatch:
+    types: [spark]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  spark-processing:
+  # This workflow contains a single job called "build"
+  spark:
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    #container: apache/spark:3.5.4-scala2.12-java17-python3-r-ubuntu
+
+    #container: bitnami/spark:sha256-6adad33c3bbb65f20f328e6e6f37efdfd7aefafffdd172b31c617a5e3aef77bc
+
+    #container: spark:python3-java17 
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
-        with:
-         java-version: '21'
-         distribution: temurin
 
-      - name: Set up Spark
-        uses: vemonet/setup-spark@v1
-        with:
-          spark-version: '3.5.3'
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y python3-pip
-          pip3 install -r requirements.txt
+    - uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: temurin
 
-      - name: Run Spark Data Processing
-        run: |
-          $SPARK_HOME/bin/spark-submit --master local data_processing.py
+    - uses: vemonet/setup-spark@v1
+      with:
+        spark-version: '3.5.3'
+        hadoop-version: '3'
 
+    - run: spark-submit --version
+    - run: spark-submit --master local people.py people.csv
+    - run: ls -la
+    - run: ls results  
     
-      - name: Upload processed data
-        uses: actions/upload-artifact@v2
-        with:
-          name: processed-data
-          path: results/data.json
+    - name: GIT commit and push docs
+      env: 
+        CI_COMMIT_MESSAGE: save spark results
+        CI_COMMIT_AUTHOR: joey 
+      run: |
+        git config --global user.name "${{ joey }}"
+        git config --global user.email "joey@outlook.com"
+        git add results
+        git commit -m "${{ env.CI_COMMIT_MESSAGE }}"
+        git push
+#    - uses: w9jds/firebase-trigger@v1.1.0
+#      with:
+#        credentials: ${{ secrets.FIREBASE_CREDENTIALS }}
+#        databaseUrl: https://big-data-a3266.firebaseio.com
+#        databaseType: firestore
+#        path: results
+#        doc: myresult2
+#        value: ${{ secrets.FIREBASE_CREDENTIALS }}
+        
