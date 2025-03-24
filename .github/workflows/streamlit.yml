@@ -25,7 +25,4 @@ jobs:
       - name: Deploy Streamlit app
         run: |
           nohup streamlit run dashboard.py --server.port=80 &
-        
-      - name: Clean up
-        run: |
-          kill $(lsof -t -i:80)
+    
