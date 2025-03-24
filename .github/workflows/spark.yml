@@ -11,38 +11,31 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-        
+
       - name: Set up Spark
         uses: vemonet/setup-spark@v1
         with:
           spark-version: '3.5.3'
-        
+
       - name: Install dependencies
         run: |
           sudo apt-get install -y python3-pip
           pip3 install -r requirements.txt
-        
+
       - name: Run Spark Data Processing
         run: |
           $SPARK_HOME/bin/spark-submit --master local data_processing.py
-        continue-on-error: true
-        
-      - name: Save processed data to output folder
+
+      - name: Move processed data to output directory
         run: |
           mkdir -p output
-          cp -r results/* output/
-        
-      - name: Upload output folder
-        uses: actions/upload-artifact@v3
-        with:
-          name: processed-data
-          path: output/
+          mv results/* output/
 
-      - name: Clean up Spark environment
+      - name: Verify processed data
         run: |
-          rm -rf $SPARK_HOME
+          ls -l output/
