@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   process-data:
@@ -15,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Spark
         uses: vemonet/setup-spark@v1
@@ -24,10 +23,10 @@ jobs:
 
       - name: Run Spark Data Processing
         run: |
-          $SPARK_HOME/bin/spark-submit people.py
+          spark-submit people.py
 
-      - name: Upload processed data
+      - name: Upload Processed Data
         uses: actions/upload-artifact@v3
         with:
-          name: processed-results
-          path: results/
+          name: processed-data
+          path: results/data.json
