@@ -30,11 +30,7 @@ try:
     st.write(f"### People Born in {selected_year}")
     st.dataframe(filtered_df)
 
-    # Sex distribution
-   # st.write("Sex Distribution")
- #   df_pandas = df.toPandas()  # Convert Spark DataFrame to Pandas DataFrame
-   # gender_counts = df_pandas['sex'].value_counts()  # Group and count occurrences of "sex"
-  #  st.bar_chart(gender_counts)  # Display the bar chart
+   
 
 except FileNotFoundError:
     st.error(f"Processed data `{DATA_PATH}` not found! Run `people.py` first.")
