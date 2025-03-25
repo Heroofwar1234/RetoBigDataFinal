@@ -32,9 +32,9 @@ try:
 
     # Sex distribution
     st.write("Sex Distribution")
-    df = df.select("sex")  
-    gender_counts = df.groupBy("sex").count().toPandas()# We're only interested in the "sex" column for this chart
-    st.bar_chart(gender_counts.set_index('sex')['count'])
+    df_pandas = df.toPandas()  # Convert Spark DataFrame to Pandas DataFrame
+    gender_counts = df_pandas['sex'].value_counts()  # Group and count occurrences of "sex"
+    st.bar_chart(gender_counts)  # Display the bar chart
 
 except FileNotFoundError:
     st.error(f"Processed data `{DATA_PATH}` not found! Run `people.py` first.")
