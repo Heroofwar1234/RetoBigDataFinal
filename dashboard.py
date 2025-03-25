@@ -12,9 +12,9 @@ def load_data():
     return pd.DataFrame([json.loads(row) for row in data])
 
 # Streamlit App Layout
-st.set_page_config(page_title="People Data Dashboard", layout="wide")
+st.set_page_config(page_title="People Data", layout="wide")
 
-st.title("People Data Dashboard 📊")
+st.title("People Data")
 
 # Load and display data
 try:
@@ -31,9 +31,10 @@ try:
     st.dataframe(filtered_df)
 
     # Sex distribution
-    st.write("### Gender Distribution (1903-1911)")
-    gender_counts = df["sex"].value_counts()
-    st.bar_chart(gender_counts)
+    st.write("Sex Distribution")
+    df = df.select("sex")  
+    gender_counts = df.groupBy("sex").count().toPandas()# We're only interested in the "sex" column for this chart
+    st.bar_chart(gender_counts.set_index('sex')['count'])
 
 except FileNotFoundError:
     st.error(f"Processed data `{DATA_PATH}` not found! Run `people.py` first.")
